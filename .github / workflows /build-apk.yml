@@ -1,0 +1,152 @@
+name: Construire APK Le Guide de l ordinateur 
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "*.zip"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  creer-apk:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Préparer Android
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ""
+
+      - name: Installer les composants Android nécessaires
+        shell: bash
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Trouver le ZIP du livre
+        shell: bash
+        run: |
+          ZIP_FILE=$(find . -maxdepth 1 -type f -iname "*.zip" | head -n 1)
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERREUR : aucun fichier ZIP trouvé."
+            exit 1
+          fi
+
+          echo "ZIP trouvé : $ZIP_FILE"
+          echo "ZIP_FILE=$ZIP_FILE" >> "$GITHUB_ENV"
+
+      - name: Extraire le projet
+        shell: bash
+        run: |
+          rm -rf projet
+          mkdir projet
+
+          unzip -q "$ZIP_FILE" -d projet
+
+          echo "Projet extrait."
+
+      - name: Trouver le dossier de l'application
+        shell: bash
+        run: |
+          PACKAGE=$(find projet -type f -name "package.json" \
+            -not -path "*/node_modules/*" | head -n 1)
+
+          if [ -z "$PACKAGE" ]; then
+            echo "ERREUR : package.json introuvable."
+            exit 1
+          fi
+
+          APP_DIR=$(dirname "$PACKAGE")
+
+          echo "Application trouvée dans : $APP_DIR"
+          echo "APP_DIR=$APP_DIR" >> "$GITHUB_ENV"
+
+      - name: Vérifier Capacitor
+        working-directory: ${{ env.APP_DIR }}
+        shell: bash
+        run: |
+          if [ -f "capacitor.config.json" ]; then
+            echo "Configuration Capacitor trouvée."
+          elif [ -f "capacitor.config.ts" ]; then
+            echo "Configuration Capacitor trouvée."
+          elif [ -f "capacitor.config.js" ]; then
+            echo "Configuration Capacitor trouvée."
+          else
+            echo "ERREUR : configuration Capacitor introuvable."
+            exit 1
+          fi
+
+      - name: Installer les dépendances
+        working-directory: ${{ env.APP_DIR }}
+        shell: bash
+        run: |
+          npm install
+
+      - name: Vérifier la version de Capacitor
+        working-directory: ${{ env.APP_DIR }}
+        run: npx cap --version
+
+      - name: Préparer l'icône de l'application
+        working-directory: ${{ env.APP_DIR }}
+        shell: bash
+        run: |
+          if [ ! -f "www/icon.png" ]; then
+            echo "ERREUR : www/icon.png introuvable."
+            exit 1
+          fi
+
+          mkdir -p assets
+          cp "www/icon.png" "assets/icon.png"
+
+          echo "Icône préparée."
+
+      - name: Ajouter Android
+        working-directory: ${{ env.APP_DIR }}
+        shell: bash
+        run: |
+          if [ -d "android" ]; then
+            echo "Le dossier Android existe déjà."
+          else
+            npx cap add android
+          fi
+
+      - name: Générer l'icône Android
+        working-directory: ${{ env.APP_DIR }}
+        shell: bash
+        run: |
+          npx @capacitor/assets generate --android
+
+      - name: Synchroniser Android
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          npx cap sync android
+
+      - name: Construire l'APK
+        working-directory: ${{ env.APP_DIR }}/android
+        shell: bash
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Israel_AI_Le_Livre_APK
+          path: ${{ env.APP_DIR }}/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
