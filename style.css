@@ -1,0 +1,773 @@
+/* =========================================================
+   LE GUIDE DE L'ORDINATEUR
+   STYLE PRINCIPAL
+========================================================= */
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f6fb;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   PAGES
+========================================================= */
+
+.page {
+    min-height: 100vh;
+    width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   RUBAN / EN-TÊTE DE L'ACCUEIL
+========================================================= */
+
+.home-header {
+    width: 100%;
+    min-height: 120px;
+
+    background: linear-gradient(
+        135deg,
+        #1565c0,
+        #1976d2,
+        #0d47a1
+    );
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.header-content {
+    width: 100%;
+    max-width: 900px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+}
+
+.app-icon {
+    width: 65px;
+    height: 65px;
+
+    background: white;
+    color: #1565c0;
+
+    border-radius: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 34px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.home-header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.home-header p {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   CONTENU ACCUEIL
+========================================================= */
+
+.home-content {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 30px 18px 50px;
+}
+
+
+/* =========================================================
+   CARTE DE BIENVENUE
+========================================================= */
+
+.welcome-card {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    margin-bottom: 22px;
+
+    text-align: center;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-card h2 {
+    color: #1565c0;
+    margin-bottom: 12px;
+}
+
+.welcome-card p {
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LANGUES
+========================================================= */
+
+.language-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    flex-wrap: wrap;
+}
+
+.language-box button {
+    border: 2px solid #1565c0;
+
+    background: white;
+
+    color: #1565c0;
+
+    border-radius: 10px;
+
+    padding: 10px 16px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.language-box button:hover {
+    background: #e3f2fd;
+}
+
+.language-box button.active {
+    background: #1565c0;
+    color: white;
+}
+
+
+/* =========================================================
+   BOUTONS PRINCIPAUX
+========================================================= */
+
+.main-buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px, 1fr)
+        );
+
+    gap: 16px;
+}
+
+.main-button {
+    border: none;
+
+    background: white;
+
+    color: #1565c0;
+
+    border-radius: 16px;
+
+    min-height: 100px;
+
+    padding: 18px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.main-button:hover {
+    background: #e3f2fd;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.12);
+}
+
+.main-button:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   PAGES INTERNES
+========================================================= */
+
+.content-page {
+    width: 100%;
+    max-width: 950px;
+
+    margin: 0 auto;
+
+    padding: 20px 18px 50px;
+}
+
+.content-page > h1 {
+    color: #1565c0;
+
+    margin-top: 25px;
+    margin-bottom: 12px;
+
+    text-align: center;
+}
+
+.content-page > p {
+    text-align: center;
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   BOUTON RETOUR
+========================================================= */
+
+.back-button {
+    border: none;
+
+    background: #1565c0;
+
+    color: white;
+
+    padding: 11px 17px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+
+    transition: 0.2s;
+}
+
+.back-button:hover {
+    background: #0d47a1;
+}
+
+.back-button:active {
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   NIVEAUX
+========================================================= */
+
+.levels-container {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(250px, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-top: 25px;
+}
+
+.level-button,
+.general-quiz-button {
+    border: none;
+
+    background: white;
+
+    border-radius: 16px;
+
+    min-height: 85px;
+
+    padding: 18px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s,
+        background 0.2s;
+}
+
+.level-button {
+    color: #1565c0;
+}
+
+.general-quiz-button {
+    color: #6a1b9a;
+
+    border: 2px solid #6a1b9a;
+}
+
+.level-button:hover {
+    background: #e3f2fd;
+    transform: translateY(-2px);
+}
+
+.general-quiz-button:hover {
+    background: #f3e5f5;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   PAGE CRÉATEUR
+========================================================= */
+
+.creator-card {
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 30px 22px;
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+}
+
+.creator-photo-container {
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 20px;
+}
+
+.creator-photo {
+    width: 150px;
+    height: 150px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 5px solid #1565c0;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.creator-card h1 {
+    color: #1565c0;
+
+    margin-bottom: 15px;
+}
+
+.creator-card h2 {
+    color: #1f2937;
+
+    margin-bottom: 18px;
+}
+
+.creator-card p {
+    line-height: 1.7;
+
+    margin-top: 12px;
+}
+
+
+/* =========================================================
+   PROGRESSION
+========================================================= */
+
+#progressContent {
+    margin-top: 25px;
+}
+
+.progress-card {
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    margin-bottom: 15px;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.progress-card h2 {
+    color: #1565c0;
+
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+
+    height: 18px;
+
+    background: #e0e0e0;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    margin-top: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+
+    width: 0%;
+
+    background: linear-gradient(
+        90deg,
+        #1565c0,
+        #42a5f5
+    );
+
+    border-radius: 20px;
+
+    transition: width 0.5s ease;
+}
+
+
+/* =========================================================
+   CONTENU DES LEÇONS
+========================================================= */
+
+#levelContent {
+    margin-top: 25px;
+}
+
+.lesson {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.lesson h2 {
+    color: #1565c0;
+
+    margin-bottom: 14px;
+}
+
+.lesson h3 {
+    color: #1976d2;
+
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+
+.lesson p {
+    line-height: 1.7;
+
+    margin-bottom: 12px;
+}
+
+.lesson ul,
+.lesson ol {
+    padding-left: 25px;
+
+    line-height: 1.8;
+}
+
+.lesson li {
+    margin-bottom: 6px;
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.quiz-question {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.quiz-question h3 {
+    color: #1565c0;
+
+    margin-bottom: 15px;
+
+    line-height: 1.5;
+}
+
+.quiz-answer {
+    display: block;
+
+    width: 100%;
+
+    text-align: left;
+
+    border: 2px solid #d5dce5;
+
+    background: white;
+
+    border-radius: 10px;
+
+    padding: 13px 15px;
+
+    margin-top: 9px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.quiz-answer:hover {
+    background: #e3f2fd;
+
+    border-color: #1565c0;
+}
+
+.quiz-answer.selected {
+    background: #bbdefb;
+
+    border-color: #1565c0;
+}
+
+.quiz-answer.correct {
+    background: #c8e6c9;
+
+    border-color: #2e7d32;
+}
+
+.quiz-answer.incorrect {
+    background: #ffcdd2;
+
+    border-color: #c62828;
+}
+
+
+/* =========================================================
+   BOUTONS DU QUIZ
+========================================================= */
+
+.quiz-button {
+    display: block;
+
+    margin: 25px auto;
+
+    border: none;
+
+    background: #1565c0;
+
+    color: white;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.quiz-button:hover {
+    background: #0d47a1;
+}
+
+
+/* =========================================================
+   MESSAGE DE RÉSULTAT
+========================================================= */
+
+.result-card {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    margin-top: 25px;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.result-card h2 {
+    color: #1565c0;
+
+    margin-bottom: 15px;
+}
+
+.result-card p {
+    line-height: 1.7;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TÉLÉPHONE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .home-header {
+        min-height: 105px;
+
+        padding: 16px;
+    }
+
+    .header-content {
+        gap: 12px;
+    }
+
+    .app-icon {
+        width: 55px;
+        height: 55px;
+
+        font-size: 28px;
+
+        border-radius: 15px;
+    }
+
+    .home-header h1 {
+        font-size: 22px;
+    }
+
+    .home-header p {
+        font-size: 13px;
+    }
+
+    .home-content {
+        padding: 20px 14px 40px;
+    }
+
+    .welcome-card {
+        padding: 20px 16px;
+    }
+
+    .main-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .main-button {
+        min-height: 80px;
+    }
+
+    .content-page {
+        padding: 15px 14px 40px;
+    }
+
+    .content-page > h1 {
+        font-size: 24px;
+    }
+
+    .levels-container {
+        grid-template-columns: 1fr;
+    }
+
+    .creator-card {
+        padding: 25px 16px;
+    }
+
+    .creator-photo {
+        width: 130px;
+        height: 130px;
+    }
+
+    .lesson,
+    .quiz-question {
+        padding: 18px 15px;
+    }
+
+}
+
+
+/* 
+=========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus {
+    outline: 3px solid rgba(21, 101, 192, 0.25);
+
+    outline-offset: 2px;
+}

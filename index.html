@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#1565c0"
+    >
+
+    <meta
+        name="description"
+        content="Le Guide de l'ordinateur - apprendre l'informatique étape par étape"
+    >
+
+    <title>Le Guide de l'ordinateur</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         PAGE D'ACCUEIL
+    ====================================================== -->
+
+    <section id="homePage" class="page">
+
+        <!-- Ruban de la page d'accueil -->
+        <header id="homeHeader" class="home-header">
+
+            <div class="header-content">
+
+                <div class="app-icon">
+                    🤖
+                </div>
+
+                <div>
+                    <h1 data-fr="Le Guide de l’ordinateur"
+                        data-en="The Computer Guide">
+                        Le Guide de l’ordinateur
+                    </h1>
+
+                    <p
+                        data-fr="Apprendre l'informatique simplement"
+                        data-en="Learn computer science simply">
+                        Apprendre l'informatique simplement
+                    </p>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Contenu de l'accueil -->
+        <main class="home-content">
+
+            <div class="welcome-card">
+
+                <h2
+                    data-fr="Bienvenue ! 👋"
+                    data-en="Welcome! 👋">
+                    Bienvenue ! 👋
+                </h2>
+
+                <p
+                    data-fr="Découvrez les bases de l'ordinateur à travers des leçons, des exercices et des quiz."
+                    data-en="Discover the basics of computers through lessons, exercises and quizzes.">
+                    Découvrez les bases de l'ordinateur à travers des
+                    leçons, des exercices et des quiz.
+                </p>
+
+            </div>
+
+
+            <!-- Sélecteur de langue -->
+
+            <div class="language-box">
+
+                <button
+                    id="frButton"
+                    onclick="setLanguage('fr')">
+                    🇫🇷 Français
+                </button>
+
+                <button
+                    id="enButton"
+                    onclick="setLanguage('en')">
+                    🇬🇧 English
+                </button>
+
+            </div>
+
+
+            <!-- Boutons principaux -->
+
+            <div class="main-buttons">
+
+                <button
+                    class="main-button"
+                    onclick="startBook()">
+
+                    📖
+
+                    <span
+                        data-fr="Commencer"
+                        data-en="Start">
+                        Commencer
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="main-button"
+                    onclick="showProgress()">
+
+                    📊
+
+                    <span
+                        data-fr="Ma progression"
+                        data-en="My progress">
+                        Ma progression
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="main-button"
+                    onclick="showCreator()">
+
+                    👨‍💻
+
+                    <span
+                        data-fr="Identité du créateur"
+                        data-en="Creator identity">
+                        Identité du créateur
+                    </span>
+
+                </button>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAGE DU LIVRE
+    ====================================================== -->
+
+    <section
+        id="bookPage"
+        class="page hidden">
+
+        <main class="content-page">
+
+            <button
+                class="back-button"
+                onclick="goHome()">
+
+                🏠
+                <span
+                    data-fr="Accueil"
+                    data-en="Home">
+                    Accueil
+                </span>
+
+            </button>
+
+
+            <h1
+                data-fr="📖 Le Guide de l’ordinateur"
+                data-en="📖 The Computer Guide">
+
+                📖 Le Guide de l’ordinateur
+
+            </h1>
+
+
+            <p
+                data-fr="Choisissez un niveau pour commencer votre apprentissage."
+                data-en="Choose a level to start learning.">
+
+                Choisissez un niveau pour commencer votre apprentissage.
+
+            </p>
+
+
+            <!-- Les 5 niveaux -->
+
+            <div class="levels-container">
+
+                <button
+                    class="level-button"
+                    onclick="showLevel(1)">
+
+                    🟢
+
+                    <span
+                        data-fr="Niveau 1 — Découvrir l'ordinateur"
+                        data-en="Level 1 — Discover the computer">
+
+                        Niveau 1 — Découvrir l'ordinateur
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="level-button"
+                    onclick="showLevel(2)">
+
+                    🔵
+
+                    <span
+                        data-fr="Niveau 2 — Utiliser Windows"
+                        data-en="Level 2 — Using Windows">
+
+                        Niveau 2 — Utiliser Windows
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="level-button"
+                    onclick="showLevel(3)">
+
+                    🟡
+
+                    <span
+                        data-fr="Niveau 3 — Fichiers et applications"
+                        data-en="Level 3 — Files and applications">
+
+                        Niveau 3 — Fichiers et applications
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="level-button"
+                    onclick="showLevel(4)">
+
+                    🟠
+
+                    <span
+                        data-fr="Niveau 4 — Internet et sécurité"
+                        data-en="Level 4 — Internet and security">
+
+                        Niveau 4 — Internet et sécurité
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="level-button"
+                    onclick="showLevel(5)">
+
+                    🔴
+
+                    <span
+                        data-fr="Niveau 5 — Maîtriser l'ordinateur"
+                        data-en="Level 5 — Mastering the computer">
+
+                        Niveau 5 — Maîtriser l'ordinateur
+
+                    </span>
+
+                </button>
+
+
+                <!-- Quiz général -->
+
+                <button
+                    class="general-quiz-button"
+                    onclick="showGeneralQuiz()">
+
+                    🧠
+
+                    <span
+                        data-fr="Quiz général"
+                        data-en="General quiz">
+
+                        Quiz général
+
+                    </span>
+
+                </button>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAGE IDENTITÉ DU CRÉATEUR
+    ====================================================== -->
+
+    <section
+        id="creatorPage"
+        class="page hidden">
+
+        <main class="content-page">
+
+            <button
+                class="back-button"
+                onclick="goHome()">
+
+                🏠
+                <span
+                    data-fr="Accueil"
+                    data-en="Home">
+                    Accueil
+                </span>
+
+            </button>
+
+
+            <div class="creator-card">
+
+                <div class="creator-photo-container">
+
+                    <img
+                        src="images/createur.png"
+                        alt="Photo du créateur"
+                        class="creator-photo"
+                        onerror="this.style.display='none';">
+
+                </div>
+
+
+                <h1
+                    data-fr="👨‍💻 Identité du créateur"
+                    data-en="👨‍💻 Creator identity">
+
+                    👨‍💻 Identité du créateur
+
+                </h1>
+
+
+                <h2>
+                    Israël Kibwe Zongwe
+                </h2>
+
+
+                <p>
+                    <strong
+                        data-fr="Créateur :"
+                        data-en="Creator:">
+                        Créateur :
+                    </strong>
+
+                    Israël Kibwe Zongwe
+                </p>
+
+
+                <p
+                    data-fr="Passionné par l'informatique et la programmation."
+                    data-en="Passionate about computer science and programming.">
+
+                    Passionné par l'informatique et la programmation.
+
+                </p>
+
+
+                <p
+                    data-fr="Ce guide a été conçu pour apprendre les bases de l'utilisation d'un ordinateur de manière simple et progressive."
+                    data-en="This guide was created to learn the basics of using a computer in a simple and progressive way.">
+
+                    Ce guide a été conçu pour apprendre les bases
+                    de l'utilisation d'un ordinateur de manière simple
+                    et progressive.
+
+                </p>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAGE PROGRESSION
+    ====================================================== -->
+
+    <section
+        id="progressPage"
+        class="page hidden">
+
+        <main class="content-page">
+
+            <button
+                class="back-button"
+                onclick="goHome()">
+
+                🏠
+
+                <span
+                    data-fr="Accueil"
+                    data-en="Home">
+                    Accueil
+                </span>
+
+            </button>
+
+
+            <h1
+                data-fr="📊 Ma progression"
+                data-en="📊 My progress">
+
+                📊 Ma progression
+
+            </h1>
+
+
+            <div id="progressContent">
+
+                <!-- La progression sera ajoutée par JavaScript -->
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAGE D'UN NIVEAU
+    ====================================================== -->
+
+    <section
+        id="levelPage"
+        class="page hidden">
+
+        <main class="content-page">
+
+            <button
+                class="back-button"
+                onclick="goToBook()">
+
+                📖
+
+                <span
+                    data-fr="Retour aux niveaux"
+                    data-en="Back to levels">
+
+                    Retour aux niveaux
+
+                </span>
+
+            </button>
+
+
+            <h1 id="levelTitle">
+                Niveau
+            </h1>
+
+
+            <p id="levelDescription">
+            </p>
+
+
+            <div id="levelContent">
+            </div>
+
+        </main>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
