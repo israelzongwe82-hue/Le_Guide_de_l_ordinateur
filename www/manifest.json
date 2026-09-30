@@ -1,0 +1,18 @@
+{
+  "name": "Le Guide de l’ordinateur",
+  "short_name": "Guide Ordinateur",
+  "description": "Livre éducatif interactif pour apprendre à utiliser un ordinateur.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#1769e0",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
