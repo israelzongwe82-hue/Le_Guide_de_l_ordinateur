@@ -1,0 +1,183 @@
+name: Construire APK Le Guide de l'ordinateur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "manifest.json"
+      - "images/**"
+      - "audio/**"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  construire-apk:
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      # 1. Récupérer le dépôt
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      # 2. Installer Node.js
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # 3. Installer Java
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # 4. Installer Android
+      - name: Préparer Android
+        uses: android-actions/setup-android@v4
+        with:
+          packages: |
+            platforms;android-35
+            build-tools;35.0.0
+            platform-tools
+
+      # 5. Accepter les licences Android
+      - name: Accepter les licences Android
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+
+      # 6. Vérifier les fichiers du projet
+      - name: Vérifier le projet
+        shell: bash
+        run: |
+          echo "===== FICHIERS PRINCIPAUX ====="
+
+          if [ ! -f "index.html" ]; then
+            echo "ERREUR : index.html introuvable."
+            exit 1
+          fi
+
+          if [ ! -f "app.js" ]; then
+            echo "ERREUR : app.js introuvable."
+            exit 1
+          fi
+
+          if [ ! -f "style.css" ]; then
+            echo "ERREUR : style.css introuvable."
+            exit 1
+          fi
+
+          if [ ! -d "images" ]; then
+            echo "ERREUR : dossier images introuvable."
+            exit 1
+          fi
+
+          if [ ! -d "audio" ]; then
+            echo "ERREUR : dossier audio introuvable."
+            exit 1
+          fi
+
+          echo "Tous les fichiers principaux sont présents."
+
+      # 7. Créer package.json uniquement pour la construction
+      - name: Préparer le projet Node
+        shell: bash
+        run: |
+          if [ ! -f "package.json" ]; then
+            cat > package.json <<'EOF'
+          {
+            "name": "le-guide-de-l-ordinateur",
+            "version": "1.0.0",
+            "private": true
+          }
+          EOF
+          fi
+
+          echo "package.json prêt."
+
+      # 8. Installer Capacitor
+      - name: Installer Capacitor
+        shell: bash
+        run: |
+          npm install \
+            @capacitor/core@7 \
+            @capacitor/cli@7 \
+            @capacitor/android@7
+
+      # 9. Préparer le dossier www
+      - name: Préparer les fichiers Web
+        shell: bash
+        run: |
+          rm -rf www
+          mkdir -p www
+
+          cp index.html www/
+          cp app.js www/
+          cp style.css www/
+          cp manifest.json www/
+
+          cp -r images www/images
+          cp -r audio www/audio
+
+          echo "===== CONTENU DE WWW ====="
+          find www -maxdepth 2 -type f | sort
+
+      # 10. Créer la configuration Capacitor
+      - name: Créer la configuration Capacitor
+        shell: bash
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.israelzongwe.guideordinateur",
+            "appName": "Le Guide de l'ordinateur",
+            "webDir": "www"
+          }
+          EOF
+
+          echo "Configuration Capacitor créée."
+
+      # 11. Vérifier Capacitor
+      - name: Vérifier Capacitor
+        shell: bash
+        run: |
+          npx cap --version
+          npx cap doctor || true
+
+      # 12. Créer le projet Android
+      - name: Ajouter Android
+        shell: bash
+        run: |
+          if [ -d "android" ]; then
+            echo "Le dossier Android existe déjà."
+          else
+            npx cap add android
+          fi
+
+      # 13. Synchroniser les fichiers
+      - name: Synchroniser Android
+        shell: bash
+        run: |
+          npx cap sync android
+
+      # 14. Construire l'APK
+      - name: Construire APK Debug
+        working-directory: android
+        shell: bash
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # 15. Publier l'APK
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Le_Guide_de_l_ordinateur_APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
