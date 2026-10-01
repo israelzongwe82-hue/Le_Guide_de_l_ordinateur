@@ -261,6 +261,76 @@ function renderLessonImages(lesson) {
     `).join("");
 }
 
+function renderPracticalGuide(levelNumber, index, lesson) {
+    const title = String(lesson.title || "").toLowerCase();
+    const fr = [];
+    const en = [];
+
+    function add(f, e) { fr.push(f); en.push(e); }
+
+    if (title.includes("allumer") || title.includes("éteindre")) {
+        add("1. Vérifiez que l’ordinateur est bien alimenté.", "1. Check that the computer has power.");
+        add("2. Appuyez sur le bouton d’alimentation et attendez l’affichage du bureau.", "2. Press the power button and wait for the desktop.");
+        add("3. Pour arrêter, enregistrez d’abord votre travail, puis ouvrez le menu Démarrer et choisissez l’arrêt.", "3. To shut down, save your work, open Start, then choose Shut down.");
+        add("Exemple : si vous venez de terminer un devoir, enregistrez-le avant d’éteindre l’ordinateur.", "Example: if you just finished homework, save it before shutting down.");
+    } else if (title.includes("souris") || title.includes("glisser")) {
+        add("1. Déplacez doucement la souris et observez la flèche à l’écran.", "1. Move the mouse gently and watch the pointer.");
+        add("2. Placez la flèche sur l’élément voulu, puis cliquez une fois pour le sélectionner.", "2. Place the pointer on the item, then click once to select it.");
+        add("3. Pour ouvrir un élément, double-cliquez dessus. Pour afficher les options, faites un clic droit.", "3. To open an item, double-click it. To show options, right-click it.");
+        add("4. Pour glisser un élément, cliquez dessus, maintenez le bouton gauche, déplacez la souris, puis relâchez.", "4. To drag an item, click it, hold the left button, move the mouse, then release.");
+    } else if (title.includes("clavier")) {
+        add("1. Ouvrez un programme dans lequel vous pouvez écrire, par exemple un traitement de texte.", "1. Open a program where you can type, such as a word processor.");
+        add("2. Cliquez à l’endroit où vous voulez écrire, puis tapez une phrase.", "2. Click where you want to type, then type a sentence.");
+        add("3. Appuyez sur Entrée pour commencer une nouvelle ligne et sur Espace pour séparer les mots.", "3. Press Enter for a new line and Space to separate words.");
+        add("4. Essayez ensuite Ctrl + C, Ctrl + X et Ctrl + V sur une sélection de texte.", "4. Then try Ctrl + C, Ctrl + X and Ctrl + V on selected text.");
+    } else if (title.includes("fenêtre") || title.includes("application")) {
+        add("1. Ouvrez l’application depuis le menu Démarrer ou son icône.", "1. Open the application from Start or its icon.");
+        add("2. Regardez les boutons en haut à droite : réduire, agrandir/restaurer et fermer.", "2. Look at the top-right buttons: minimize, maximize/restore and close.");
+        add("3. Cliquez sur réduire pour cacher temporairement la fenêtre sans fermer le programme.", "3. Click minimize to hide the window temporarily without closing the program.");
+        add("4. Cliquez sur X lorsque vous avez terminé et que vous voulez fermer l’application.", "4. Click X when you are finished and want to close the application.");
+    } else if (title.includes("fichier") || title.includes("dossier") || title.includes("copier") || title.includes("clé usb")) {
+        add("1. Ouvrez l’Explorateur de fichiers et allez dans le dossier concerné.", "1. Open File Explorer and go to the relevant folder.");
+        add("2. Cliquez une fois sur le fichier ou le dossier pour le sélectionner.", "2. Click the file or folder once to select it.");
+        add("3. Pour renommer, faites un clic droit puis choisissez Renommer. Écrivez le nouveau nom et appuyez sur Entrée.", "3. To rename, right-click and choose Rename. Type the new name and press Enter.");
+        add("4. Pour copier, choisissez Copier ou appuyez sur Ctrl + C, allez à destination, puis appuyez sur Ctrl + V.", "4. To copy, choose Copy or press Ctrl + C, go to the destination, then press Ctrl + V.");
+        add("5. Avant de supprimer un fichier important, vérifiez son nom et son contenu.", "5. Before deleting an important file, check its name and contents.");
+    } else if (title.includes("navigateur") || title.includes("adresse web") || title.includes("recherche") || title.includes("onglet")) {
+        add("1. Ouvrez votre navigateur, par exemple Chrome.", "1. Open your browser, for example Chrome.");
+        add("2. Cliquez dans la barre d’adresse située en haut de la fenêtre.", "2. Click the address bar at the top of the window.");
+        add("3. Écrivez l’adresse d’un site ou des mots-clés, puis appuyez sur Entrée.", "3. Type a website address or keywords, then press Enter.");
+        add("4. Lisez plusieurs résultats et vérifiez la source avant de faire confiance à une information.", "4. Read several results and check the source before trusting information.");
+        add("5. Pour un nouvel onglet, cliquez sur + ou utilisez Ctrl + T. Pour le fermer, utilisez son X ou Ctrl + W.", "5. For a new tab, click + or use Ctrl + T. To close it, use its X or Ctrl + W.");
+    } else if (title.includes("télécharger") || title.includes("envoyer") || title.includes("compte") || title.includes("mot de passe") || title.includes("sécurité")) {
+        add("1. Vérifiez d’abord le site et l’adresse avant de saisir une information ou de télécharger un fichier.", "1. First check the website and address before entering information or downloading a file.");
+        add("2. Cliquez seulement sur le bouton ou le lien correspondant réellement à l’action recherchée.", "2. Click only the button or link that actually matches the action you want.");
+        add("3. Après un téléchargement, ouvrez le dossier Téléchargements et vérifiez le nom du fichier avant de l’ouvrir.", "3. After a download, open Downloads and check the filename before opening it.");
+        add("4. Ne communiquez jamais un mot de passe dans un message public ou à une personne qui n’en a pas besoin.", "4. Never share a password publicly or with someone who does not need it.");
+    } else if (title.includes("document") || title.includes("texte") || title.includes("gras") || title.includes("taille") || title.includes("aligner") || title.includes("image") || title.includes("imprimer")) {
+        add("1. Ouvrez votre traitement de texte et créez ou ouvrez le document concerné.", "1. Open your word processor and create or open the document.");
+        add("2. Cliquez à l’endroit voulu et écrivez votre contenu.", "2. Click where you want and type your content.");
+        add("3. Sélectionnez le texte avant de le mettre en gras, de changer sa taille ou son alignement.", "3. Select the text before making it bold, changing its size or alignment.");
+        add("4. Enregistrez régulièrement avec Ctrl + S. Avant d’imprimer, regardez l’aperçu et vérifiez les pages.", "4. Save regularly with Ctrl + S. Before printing, check the preview and pages.");
+    } else if (title.includes("disque") || title.includes("stockage") || title.includes("corbeille") || title.includes("antivirus") || title.includes("mise à jour") || title.includes("sauvegarde")) {
+        add("1. Ouvrez l’Explorateur de fichiers et regardez les lecteurs et dossiers disponibles.", "1. Open File Explorer and look at the available drives and folders.");
+        add("2. Vérifiez où sont enregistrés vos fichiers importants avant de les déplacer ou supprimer.", "2. Check where important files are stored before moving or deleting them.");
+        add("3. Si vous supprimez un fichier par erreur, ouvrez la Corbeille et cherchez l’option Restaurer.", "3. If you delete a file by mistake, open Recycle Bin and look for Restore.");
+        add("4. Faites régulièrement des sauvegardes et installez les mises à jour proposées par le système.", "4. Make regular backups and install system updates when appropriate.");
+    } else if (title.includes("zip") || title.includes("capture") || title.includes("installer") || title.includes("désinstaller") || title.includes("paramètres") || title.includes("périphérique") || title.includes("entretenir")) {
+        add("1. Lisez d’abord le nom de l’action que vous allez effectuer et vérifiez le fichier ou le périphérique concerné.", "1. First read the action you are about to perform and check the file or device involved.");
+        add("2. Ouvrez le menu ou le dossier correspondant, puis cherchez l’option demandée : Extraire, Installer, Paramètres, etc.", "2. Open the relevant menu or folder and look for the requested option: Extract, Install, Settings, etc.");
+        add("3. Cliquez sur l’option, lisez ce qui est affiché et ne validez pas une action importante sans vérifier.", "3. Click the option, read what is shown and do not confirm an important action without checking.");
+        add("Exemple : pour une capture d’écran, appuyez sur Windows + Maj + S, sélectionnez une zone, puis vérifiez le résultat.", "Example: for a screenshot, press Windows + Shift + S, select an area, then check the result.");
+    } else {
+        add("1. Ouvrez le programme ou le dossier indiqué dans la leçon.", "1. Open the program or folder mentioned in the lesson.");
+        add("2. Cherchez le bouton, le menu ou l’option indiqué dans l’explication.", "2. Look for the button, menu or option mentioned in the explanation.");
+        add("3. Cliquez sur l’option, observez ce qui change, puis continuez à l’étape suivante.", "3. Click the option, observe what changes, then continue to the next step.");
+        add("4. Recommencez l’opération vous-même pour vérifier que vous avez compris.", "4. Repeat the operation yourself to check that you understood it.");
+    }
+
+    const list = (currentLanguage === "fr" ? fr : en).map((x,i) => `<li>${x}</li>`).join("");
+    return `<div class="lesson-practical-guide"><h3>🧭 ${currentLanguage === "fr" ? "Guide pratique — faites-le vous-même" : "Practical guide — do it yourself"}</h3><ol>${list}</ol><p><strong>${currentLanguage === "fr" ? "Exemple concret :" : "Concrete example:"}</strong> ${currentLanguage === "fr" ? "refaites les étapes lentement, puis essayez une deuxième fois sans regarder la leçon." : "repeat the steps slowly, then try a second time without looking at the lesson."}</p></div>`;
+}
+
 function renderLessonStudyHelp(levelNumber, index) {
     const fr = [
         "Prenez le temps de refaire l'action sur un ordinateur. Lire l'explication est utile, mais la pratique vous aide à mémoriser les étapes.",
@@ -569,7 +639,7 @@ function showLevel(levelNumber) {
     lessons.forEach((lesson,index) => {
         const lessonTitle = currentLanguage === "fr" ? lesson.title : lesson.titleEn;
         const lessonContent = currentLanguage === "fr" ? lesson.content : lesson.contentEn;
-        html += `<article class="lesson"><h2>${escapeHtml(lessonTitle)}</h2>${renderLessonImages(lesson)}${lessonContent}${renderLessonStudyHelp(levelNumber, index)}</article>`;
+        html += `<article class="lesson"><h2>${escapeHtml(lessonTitle)}</h2>${renderLessonImages(lesson)}${lessonContent}${renderPracticalGuide(levelNumber, index, lesson)}${renderLessonStudyHelp(levelNumber, index)}</article>`;
     });
     html += `<div class="lesson"><h2>🧠 ${currentLanguage === "fr" ? "Quiz du niveau" : "Level quiz"}</h2><p>${currentLanguage === "fr" ? "Après les leçons, testez vos connaissances avec 10 questions et une explication après chaque réponse." : "After the lessons, test your knowledge with 10 questions and an explanation after each answer."}</p><button class="quiz-button" onclick="showLevelQuiz(${levelNumber})">🧠 ${currentLanguage === "fr" ? "Commencer le quiz" : "Start quiz"}</button></div>`;
     content.innerHTML = html;
