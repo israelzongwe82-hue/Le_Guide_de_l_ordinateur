@@ -1,0 +1,216 @@
+name: Construire APK Le Guide de l'ordinateur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "manifest.json"
+      - "images/**"
+      - "audio/**"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  construire-apk:
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      # 1. Récupérer le dépôt
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      # 2. Installer Node.js
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 3. Installer Java
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # 4. Préparer le SDK Android
+      - name: Préparer Android
+        uses: android-actions/setup-android@v4
+        with:
+          packages: "platform-tools"
+
+      # 5. Installer les composants Android nécessaires
+      - name: Installer les composants Android
+        shell: bash
+        run: |
+          set -e
+
+          sdkmanager "platform-tools" \
+                     "platforms;android-35" \
+                     "build-tools;35.0.0"
+
+          echo "Composants Android installés."
+
+      # 6. Accepter les licences Android
+      - name: Accepter les licences Android
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+
+      # 7. Vérifier les fichiers du projet
+      - name: Vérifier le projet
+        shell: bash
+        run: |
+          set -e
+
+          test -f "index.html"
+          test -f "app.js"
+          test -f "style.css"
+          test -f "manifest.json"
+          test -d "images"
+          test -d "audio"
+
+          if [ ! -f "images/icon.png" ]; then
+            echo "ERREUR : images/icon.png est introuvable."
+            exit 1
+          fi
+
+          echo "Tous les fichiers nécessaires sont présents."
+          echo "Icône trouvée : images/icon.png"
+
+      # 8. Préparer package.json
+      - name: Préparer le projet Node
+        shell: bash
+        run: |
+          if [ ! -f "package.json" ]; then
+            cat > package.json <<'EOF'
+          {
+            "name": "le-guide-de-l-ordinateur",
+            "version": "1.0.0",
+            "private": true
+          }
+          EOF
+          fi
+
+          echo "package.json prêt."
+
+      # 9. Installer Capacitor et Capacitor Assets
+      - name: Installer Capacitor
+        shell: bash
+        run: |
+          npm install \
+            @capacitor/core@8 \
+            @capacitor/cli@8 \
+            @capacitor/android@8 \
+            @capacitor/assets@3
+
+      # 10. Préparer les fichiers Web
+      - name: Préparer les fichiers Web
+        shell: bash
+        run: |
+          set -e
+
+          rm -rf www
+          mkdir -p www
+
+          cp index.html www/
+          cp app.js www/
+          cp style.css www/
+          cp manifest.json www/
+
+          cp -r images www/images
+          cp -r audio www/audio
+
+          echo "Fichiers Web préparés."
+
+      # 11. Préparer l'icône officielle
+      - name: Préparer l'icône officielle
+        shell: bash
+        run: |
+          set -e
+
+          rm -rf assets
+          mkdir -p assets
+
+          cp "images/icon.png" "assets/icon.png"
+
+          echo "Icône officielle utilisée :"
+          ls -lh "assets/icon.png"
+
+      # 12. Créer la configuration Capacitor
+      - name: Créer la configuration Capacitor
+        shell: bash
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.israelzongwe.guideordinateur",
+            "appName": "Le Guide de l'ordinateur",
+            "webDir": "www"
+          }
+          EOF
+
+          echo "Configuration Capacitor créée."
+
+      # 13. Vérifier Capacitor
+      - name: Vérifier Capacitor
+        shell: bash
+        run: |
+          node --version
+          npm --version
+          npx cap --version
+
+      # 14. Ajouter Android
+      - name: Ajouter Android
+        shell: bash
+        run: |
+          if [ -d "android" ]; then
+            echo "Le dossier Android existe déjà."
+          else
+            npx cap add android
+          fi
+
+      # 15. Générer l'icône Android
+      - name: Générer l'icône Android
+        shell: bash
+        run: |
+          npx @capacitor/assets generate --android
+
+      # 16. Synchroniser Android
+      - name: Synchroniser Android
+        shell: bash
+        run: |
+          npx cap sync android
+
+      # 17. Construire l'APK
+      - name: Construire APK Debug
+        working-directory: android
+        shell: bash
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # 18. Vérifier l'APK
+      - name: Vérifier l'APK
+        shell: bash
+        run: |
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+
+          if [ ! -f "$APK" ]; then
+            echo "ERREUR : APK introuvable."
+            exit 1
+          fi
+
+          echo "APK créée avec succès :"
+          ls -lh "$APK"
+
+      # 19. Publier l'APK
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Le_Guide_de_l_ordinateur_APK_avec_icone
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
