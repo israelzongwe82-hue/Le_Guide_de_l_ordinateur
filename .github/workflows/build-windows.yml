@@ -1,0 +1,211 @@
+name: Construire Windows Le Guide de l'ordinateur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "manifest.json"
+      - "images/**"
+      - "audio/**"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  construire-windows:
+    runs-on: windows-latest
+
+    steps:
+
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Vérifier les fichiers
+        shell: pwsh
+        run: |
+          if (!(Test-Path "index.html")) {
+            Write-Error "index.html introuvable."
+          }
+
+          if (!(Test-Path "app.js")) {
+            Write-Error "app.js introuvable."
+          }
+
+          if (!(Test-Path "style.css")) {
+            Write-Error "style.css introuvable."
+          }
+
+          if (!(Test-Path "manifest.json")) {
+            Write-Error "manifest.json introuvable."
+          }
+
+          if (!(Test-Path "images")) {
+            Write-Error "Dossier images introuvable."
+          }
+
+          if (!(Test-Path "audio")) {
+            Write-Error "Dossier audio introuvable."
+          }
+
+          if (!(Test-Path "images/icon.png")) {
+            Write-Error "images/icon.png introuvable."
+          }
+
+          Write-Host "Tous les fichiers nécessaires sont présents."
+          Write-Host "Icône trouvée : images/icon.png"
+
+      - name: Préparer le projet Electron
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path electron | Out-Null
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+
+          Copy-Item "index.html" "electron/index.html" -Force
+          Copy-Item "app.js" "electron/app.js" -Force
+          Copy-Item "style.css" "electron/style.css" -Force
+          Copy-Item "manifest.json" "electron/manifest.json" -Force
+
+          Copy-Item "images" "electron/images" -Recurse -Force
+          Copy-Item "audio" "electron/audio" -Recurse -Force
+
+          Copy-Item "images/icon.png" "build/icon.png" -Force
+
+          Write-Host "Fichiers Electron préparés."
+
+      - name: Créer le programme Electron
+        shell: pwsh
+        run: |
+          @'
+          const { app, BrowserWindow } = require("electron");
+          const path = require("path");
+
+          function createWindow() {
+            const win = new BrowserWindow({
+              width: 1280,
+              height: 800,
+              minWidth: 900,
+              minHeight: 600,
+              show: false,
+              backgroundColor: "#ffffff",
+              icon: path.join(__dirname, "..", "build", "icon.png"),
+              webPreferences: {
+                contextIsolation: true,
+                nodeIntegration: false
+              }
+            });
+
+            win.loadFile(path.join(__dirname, "index.html"));
+
+            win.once("ready-to-show", () => {
+              win.show();
+            });
+          }
+
+          app.whenReady().then(() => {
+            createWindow();
+
+            app.on("activate", () => {
+              if (BrowserWindow.getAllWindows().length === 0) {
+                createWindow();
+              }
+            });
+          });
+
+          app.on("window-all-closed", () => {
+            if (process.platform !== "darwin") {
+              app.quit();
+            }
+          });
+          '@ | Set-Content -Path "electron/main.js" -Encoding UTF8
+
+          Write-Host "Programme Electron créé."
+
+      - name: Créer un fichier package.json sous Windows
+        shell: pwsh
+        run: |
+          @'
+          {
+            "name": "le-guide-de-l-ordinateur",
+            "version": "1.0.0",
+            "description": "Le Guide de l'ordinateur",
+            "main": "electron/main.js",
+            "private": true,
+            "author": "Israël Zongwe",
+            "scripts": {
+              "build:windows": "electron-builder --win nsis"
+            },
+            "devDependencies": {
+              "electron": "^39.0.0",
+              "electron-builder": "^26.0.0"
+            },
+            "build": {
+              "appId": "com.israelzongwe.guideordinateur",
+              "productName": "Le Guide de l'ordinateur",
+              "directories": {
+                "output": "dist",
+                "buildResources": "build"
+              },
+              "files": [
+                "electron/**/*",
+                "build/icon.png"
+              ],
+              "win": {
+                "target": [
+                  {
+                    "target": "nsis",
+                    "arch": [
+                      "x64"
+                    ]
+                  }
+                ],
+                "icon": "build/icon.png"
+              },
+              "nsis": {
+                "oneClick": false,
+                "allowToChangeInstallationDirectory": true,
+                "createDesktopShortcut": true,
+                "createStartMenuShortcut": true
+              },
+              "artifactName": "Le_Guide_de_l_ordinateur_Windows_Setup.exe"
+            }
+          }
+          '@ | Set-Content -Path "package.json" -Encoding UTF8
+
+          Write-Host "package.json Windows créé."
+
+      - name: Installer les dépendances
+        shell: pwsh
+        run: |
+          npm install
+
+      - name: Construire le programme Windows
+        shell: pwsh
+        run: |
+          npm run build:windows -- --publish never
+
+      - name: Vérifier le programme Windows
+        shell: pwsh
+        run: |
+          $exe = "dist/Le_Guide_de_l_ordinateur_Windows_Setup.exe"
+
+          if (!(Test-Path $exe)) {
+            Write-Error "Le fichier EXE n'a pas été créé."
+          }
+
+          Write-Host "Application Windows créée avec succès."
+          Get-Item $exe | Format-List Name,Length,FullName
+
+      - name: Publier l'application Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: Le_Guide_de_l_ordinateur_Windows
+          path: dist/Le_Guide_de_l_ordinateur_Windows_Setup.exe
+          if-no-files-found: error
