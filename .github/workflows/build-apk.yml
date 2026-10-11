@@ -1,0 +1,129 @@
+name: Construire APK Le Guide de l'ordinateur
+
+on:
+workflow_dispatch:
+push:
+branches:
+- main
+paths:
+- "index.html"
+- "app.js"
+- "style.css"
+- "manifest.json"
+- "images/"
+- "audio/"
+- ".github/workflows/build-apk.yml"
+
+jobs:
+construire-apk:
+runs-on: ubuntu-22.04
+
+steps:
+  - name: Récupérer le dépôt
+    uses: actions/checkout@v4
+
+  - name: Installer Node.js 22
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22
+
+  - name: Installer Java 21
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: "21"
+
+  - name: Préparer Android
+    uses: android-actions/setup-android@v4
+    with:
+      packages: "platform-tools"
+
+  - name: Installer les composants Android
+    shell: bash
+    run: |
+      set -e
+      sdkmanager "platform-tools" \
+        "platforms;android-35" \
+        "build-tools;35.0.0"
+      yes | sdkmanager --licenses >/dev/null || true
+
+  - name: Vérifier les fichiers
+    shell: bash
+    run: |
+      set -e
+      test -f index.html
+      test -f app.js
+      test -f style.css
+      test -f manifest.json
+      test -f images/icon.png
+      test -f images/splash.png
+      test -d audio
+      echo "Icône et splash screen trouvés."
+
+  - name: Préparer le projet Node
+    shell: bash
+    run: |
+      if [ ! -f package.json ]; then
+        cat > package.json <<'EOF'
+      {
+        "name": "le-guide-de-l-ordinateur",
+        "version": "1.0.0",
+        "private": true
+      }
+      EOF
+      fi
+
+  - name: Installer Capacitor
+    run: |
+      npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/assets@3
+
+  - name: Préparer les fichiers Web
+    shell: bash
+    run: |
+      set -e
+      rm -rf www
+      mkdir -p www
+      cp index.html app.js style.css manifest.json www/
+      cp -r images audio www/
+
+  - name: Préparer les images natives
+    shell: bash
+    run: |
+      set -e
+      mkdir -p assets
+      cp images/icon.png assets/icon.png
+      cp images/splash.png assets/splash.png
+
+  - name: Créer la configuration Capacitor
+    shell: bash
+    run: |
+      cat > capacitor.config.json <<'EOF'
+      {
+        "appId": "com.israelzongwe.guideordinateur",
+        "appName": "Le Guide de l'ordinateur",
+        "webDir": "www"
+      }
+      EOF
+
+  - name: Ajouter Android
+    run: npx cap add android
+
+  - name: Générer l'icône et le splash screen
+    run: npx @capacitor/assets generate --android
+
+  - name: Synchroniser Android
+    run: npx cap sync android
+
+  - name: Construire APK Debug
+    working-directory: android
+    shell: bash
+    run: |
+      chmod +x gradlew
+      ./gradlew assembleDebug --no-daemon
+
+  - name: Publier l'APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Le_Guide_de_l_ordinateur_APK
+      path: android/app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
