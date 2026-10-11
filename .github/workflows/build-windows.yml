@@ -49,8 +49,6 @@ steps:
         throw "Dossier audio introuvable."
       }
 
-      Write-Host "Fichiers requis vérifiés."
-
   - name: Préparer les fichiers Electron
     shell: pwsh
     run: |
@@ -61,14 +59,10 @@ steps:
       Copy-Item "app.js" "electron/app.js" -Force
       Copy-Item "style.css" "electron/style.css" -Force
       Copy-Item "manifest.json" "electron/manifest.json" -Force
-
       Copy-Item "images" "electron/images" -Recurse -Force
       Copy-Item "audio" "electron/audio" -Recurse -Force
-
       Copy-Item "images/icon.png" "build/icon.png" -Force
       Copy-Item "images/splash.png" "build/splash.png" -Force
-
-      Write-Host "Fichiers Web, icône et splash screen copiés."
 
   - name: Créer le programme Electron
     shell: pwsh
@@ -93,26 +87,18 @@ steps:
         });
 
         win.loadFile(path.join(__dirname, "index.html"));
-
-        win.once("ready-to-show", () => {
-          win.show();
-        });
+        win.once("ready-to-show", () => win.show());
       }
 
       app.whenReady().then(() => {
         createWindow();
-
         app.on("activate", () => {
-          if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-          }
+          if (BrowserWindow.getAllWindows().length === 0) createWindow();
         });
       });
 
       app.on("window-all-closed", () => {
-        if (process.platform !== "darwin") {
-          app.quit();
-        }
+        if (process.platform !== "darwin") app.quit();
       });
       '@ | Set-Content -Path "electron/main.js" -Encoding ascii
 
@@ -148,9 +134,7 @@ steps:
             "target": [
               {
                 "target": "nsis",
-                "arch": [
-                  "x64"
-                ]
+                "arch": ["x64"]
               }
             ],
             "icon": "build/icon.png"
@@ -178,12 +162,9 @@ steps:
     shell: pwsh
     run: |
       $exe = "dist/Le_Guide_de_l_ordinateur_Windows_Setup.exe"
-
       if (!(Test-Path $exe)) {
         throw "Le fichier EXE n'a pas été créé."
       }
-
-      Write-Host "Application Windows créée avec succès."
       Get-Item $exe | Format-List Name, Length, FullName
 
   - name: Publier l'application Windows
