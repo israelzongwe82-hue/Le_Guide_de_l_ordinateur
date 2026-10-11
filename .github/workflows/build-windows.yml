@@ -1,0 +1,257 @@
+name: Construire Windows Le Guide de l'ordinateur
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "manifest.json"
+      - "images/**"
+      - "audio/**"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  construire-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verifier les fichiers
+        shell: pwsh
+        run: |
+          $files = @(
+            "index.html",
+            "app.js",
+            "style.css",
+            "manifest.json",
+            "images/icon.png",
+            "images/splash.png"
+          )
+
+          foreach ($file in $files) {
+            if (!(Test-Path $file)) {
+              throw "Fichier introuvable : $file"
+            }
+          }
+
+          if (!(Test-Path "audio")) {
+            throw "Le dossier audio est introuvable."
+          }
+
+      - name: Preparer les fichiers
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path electron | Out-Null
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+
+          Copy-Item index.html electron/index.html -Force
+          Copy-Item app.js electron/app.js -Force
+          Copy-Item style.css electron/style.css -Force
+          Copy-Item manifest.json electron/manifest.json -Force
+
+          Copy-Item images electron/images -Recurse -Force
+          Copy-Item audio electron/audio -Recurse -Force
+
+          Copy-Item images/icon.png build/icon.png -Force
+          Copy-Item images/splash.png build/splash.png -Force
+
+      - name: Creer le programme Electron
+        shell: pwsh
+        run: |
+          @'
+          const { app, BrowserWindow } = require("electron");
+          const path = require("path");
+
+          let mainWindow;
+          let splashWindow;
+
+          function createMainWindow() {
+            mainWindow = new BrowserWindow({
+              width: 1280,
+              height: 800,
+              minWidth: 900,
+              minHeight: 600,
+              show: false,
+              backgroundColor: "#f2f6fb",
+              icon: path.join(__dirname, "icon.ico"),
+              webPreferences: {
+                contextIsolation: true,
+                nodeIntegration: false
+              }
+            });
+
+            mainWindow.loadFile(path.join(__dirname, "index.html"));
+
+            mainWindow.once("ready-to-show", () => {
+              if (splashWindow && !splashWindow.isDestroyed()) {
+                splashWindow.close();
+              }
+              mainWindow.show();
+            });
+          }
+
+          function createSplashWindow() {
+            splashWindow = new BrowserWindow({
+              width: 600,
+              height: 400,
+              frame: false,
+              resizable: false,
+              center: true,
+              alwaysOnTop: true,
+              show: false,
+              webPreferences: {
+                contextIsolation: true,
+                nodeIntegration: false
+              }
+            });
+
+            splashWindow.loadFile(path.join(__dirname, "splash.html"));
+            splashWindow.once("ready-to-show", () => {
+              splashWindow.show();
+              createMainWindow();
+            });
+          }
+
+          app.whenReady().then(() => {
+            createSplashWindow();
+
+            app.on("activate", () => {
+              if (BrowserWindow.getAllWindows().length === 0) {
+                createSplashWindow();
+              }
+            });
+          });
+
+          app.on("window-all-closed", () => {
+            if (process.platform !== "darwin") {
+              app.quit();
+            }
+          });
+          '@ | Set-Content electron/main.js -Encoding ascii
+
+          @'
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Le Guide de l'ordinateur</title>
+            <style>
+              html, body {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: #f2f6fb;
+              }
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="images/splash.png" alt="Le Guide de l'ordinateur">
+          </body>
+          </html>
+          '@ | Set-Content electron/splash.html -Encoding ascii
+
+      - name: Creer package.json
+        shell: pwsh
+        run: |
+          @'
+          {
+            "name": "le-guide-de-l-ordinateur",
+            "version": "1.0.0",
+            "description": "Le Guide de l'ordinateur",
+            "main": "electron/main.js",
+            "private": true,
+            "author": "Israel Zongwe",
+            "scripts": {
+              "build:windows": "electron-builder --win nsis --publish never"
+            },
+            "devDependencies": {
+              "electron": "^39.0.0",
+              "electron-builder": "^26.0.0",
+              "png-to-ico": "^2.1.8"
+            },
+            "build": {
+              "appId": "com.israelzongwe.guideordinateur",
+              "productName": "Le Guide de l'ordinateur",
+              "directories": {
+                "output": "dist",
+                "buildResources": "build"
+              },
+              "files": [
+                "electron/**/*"
+              ],
+              "win": {
+                "target": [
+                  {
+                    "target": "nsis",
+                    "arch": ["x64"]
+                  }
+                ],
+                "icon": "build/icon.ico"
+              },
+              "nsis": {
+                "oneClick": false,
+                "allowToChangeInstallationDirectory": true,
+                "createDesktopShortcut": true,
+                "createStartMenuShortcut": true
+              },
+              "artifactName": "Le_Guide_de_l_ordinateur_Windows_Setup.exe"
+            }
+          }
+          '@ | Set-Content package.json -Encoding ascii
+
+      - name: Installer les dependances
+        shell: pwsh
+        run: |
+          npm install
+
+      - name: Convertir icone PNG en ICO
+        shell: pwsh
+        run: |
+          node -e "const fs=require('fs'); const convert=require('png-to-ico'); convert('images/icon.png').then(data=>fs.writeFileSync('build/icon.ico',data)).catch(err=>{console.error(err);process.exit(1)})"
+
+          if (!(Test-Path "build/icon.ico")) {
+            throw "La conversion de l'icone a echoue."
+          }
+
+          Copy-Item build/icon.ico electron/icon.ico -Force
+
+      - name: Construire le programme Windows
+        shell: pwsh
+        run: |
+          npm run build:windows
+
+      - name: Verifier le programme Windows
+        shell: pwsh
+        run: |
+          $exe = "dist/Le_Guide_de_l_ordinateur_Windows_Setup.exe"
+
+          if (!(Test-Path $exe)) {
+            throw "Le fichier EXE n'a pas ete cree."
+          }
+
+          Get-Item $exe | Format-List Name, Length, FullName
+
+      - name: Publier le programme Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: Le_Guide_de_l_ordinateur_Windows
+          path: dist/Le_Guide_de_l_ordinateur_Windows_Setup.exe
+          if-no-files-found: error
