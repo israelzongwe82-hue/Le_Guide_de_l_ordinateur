@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1565c0">
+  <meta name="description" content="Le Guide de l’ordinateur : apprendre l’informatique étape par étape.">
+  <title>Le Guide de l’ordinateur</title>
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <section id="homePage" class="page home-page">
+      <header id="homeHeader" class="home-header">
+        <div class="home-ribbon" data-fr="💻 Le Guide de l’ordinateur" data-en="💻 The Computer Guide">💻 Le Guide de l’ordinateur</div>
+        <div class="language-switch" aria-label="Language">
+          <button id="frButton" class="language-button active" type="button" onclick="setLanguage('fr')">🇫🇷 Français</button>
+          <button id="enButton" class="language-button" type="button" onclick="setLanguage('en')">🇬🇧 English</button>
+        </div>
+      </header>
+      <div class="home-hero">
+        <div class="computer-illustration" aria-hidden="true">💻</div>
+        <h1 data-fr="Bienvenue dans Le Guide de l’ordinateur" data-en="Welcome to The Computer Guide">Bienvenue dans Le Guide de l’ordinateur</h1>
+        <p data-fr="Apprenez à utiliser un ordinateur pas à pas, avec des explications simples, des images et des quiz." data-en="Learn to use a computer step by step, with simple explanations, images and quizzes.">Apprenez à utiliser un ordinateur pas à pas, avec des explications simples, des images et des quiz.</p>
+      </div>
+      <nav class="home-menu" aria-label="Menu principal">
+        <button class="menu-button primary" type="button" onclick="startBook()"><span>📘</span><span data-fr="Commencer le livre" data-en="Start the book">Commencer le livre</span></button>
+        <button class="menu-button" type="button" onclick="showCreator()"><span>👤</span><span data-fr="Identité du créateur" data-en="Creator identity">Identité du créateur</span></button>
+        <button class="menu-button" type="button" onclick="showProgress()"><span>📊</span><span data-fr="Ma progression" data-en="My progress">Ma progression</span></button>
+        <button class="menu-button" type="button" onclick="showGeneralQuiz()"><span>🧠</span><span data-fr="Quiz général" data-en="General quiz">Quiz général</span></button>
+      </nav>
+      <p class="home-footer" data-fr="Votre apprentissage commence ici. Prenez votre temps et avancez à votre rythme." data-en="Your learning starts here. Take your time and learn at your own pace.">Votre apprentissage commence ici. Prenez votre temps et avancez à votre rythme.</p>
+    </section>
+
+    <section id="bookPage" class="page hidden">
+      <div class="page-topbar"><button class="back-button" type="button" onclick="goHome()" data-fr="← Accueil" data-en="← Home">← Accueil</button><h1 data-fr="📘 Le livre" data-en="📘 The book">📘 Le livre</h1></div>
+      <p class="page-intro" data-fr="Choisissez un niveau. Lisez les explications, observez les images, puis répondez au quiz." data-en="Choose a level. Read the explanations, view the images, then answer the quiz.">Choisissez un niveau. Lisez les explications, observez les images, puis répondez au quiz.</p>
+      <div class="level-grid">
+        <button class="level-card" type="button" onclick="showLevel(1)"><span class="level-icon">🟢</span><strong data-fr="Niveau 1" data-en="Level 1">Niveau 1</strong><span data-fr="Découvrir l’ordinateur" data-en="Discovering the computer">Découvrir l’ordinateur</span></button>
+        <button class="level-card" type="button" onclick="showLevel(2)"><span class="level-icon">🔵</span><strong data-fr="Niveau 2" data-en="Level 2">Niveau 2</strong><span data-fr="Internet et navigation" data-en="Internet and browsing">Internet et navigation</span></button>
+        <button class="level-card" type="button" onclick="showLevel(3)"><span class="level-icon">🟡</span><strong data-fr="Niveau 3" data-en="Level 3">Niveau 3</strong><span data-fr="Documents et bureautique" data-en="Documents and office tools">Documents et bureautique</span></button>
+        <button class="level-card" type="button" onclick="showLevel(4)"><span class="level-icon">🟠</span><strong data-fr="Niveau 4" data-en="Level 4">Niveau 4</strong><span data-fr="Fichiers et sécurité" data-en="Files and security">Fichiers et sécurité</span></button>
+        <button class="level-card" type="button" onclick="showLevel(5)"><span class="level-icon">🔴</span><strong data-fr="Niveau 5" data-en="Level 5">Niveau 5</strong><span data-fr="Compétences avancées" data-en="Advanced skills">Compétences avancées</span></button>
+        <button class="level-card general-card" type="button" onclick="showGeneralQuiz()"><span class="level-icon">🧠</span><strong data-fr="Quiz général" data-en="General quiz">Quiz général</strong><span data-fr="Réviser les connaissances" data-en="Review what you learned">Réviser les connaissances</span></button>
+      </div>
+    </section>
+
+    <section id="creatorPage" class="page hidden">
+      <div class="page-topbar"><button class="back-button" type="button" onclick="goHome()" data-fr="← Accueil" data-en="← Home">← Accueil</button><h1 data-fr="👤 Identité du créateur" data-en="👤 Creator identity">👤 Identité du créateur</h1></div>
+      <article class="content-card creator-card">
+        <div class="creator-avatar" aria-hidden="true">👨🏾‍💻</div>
+        <h2>KIBWE ZONGWE Israël</h2>
+        <p data-fr="Je suis élève à l’Institut CISANIKO, en 4ème Commerciale et Gestion. Depuis mon enfance, je m’intéresse à l’informatique, aux ordinateurs, aux jeux vidéo et à la programmation." data-en="I am a student at Institut CISANIKO, in the fourth year of Commercial and Management studies. Since childhood, I have been interested in computers, video games and programming.">Je suis élève à l’Institut CISANIKO, en 4ème Commerciale et Gestion. Depuis mon enfance, je m’intéresse à l’informatique, aux ordinateurs, aux jeux vidéo et à la programmation.</p>
+        <p data-fr="Mon objectif est d’apprendre davantage, de créer des applications utiles et de devenir programmeur. J’aimerais aussi encourager les jeunes à apprendre l’informatique et l’anglais." data-en="My goal is to keep learning, create useful applications and become a programmer. I would also like to encourage young people to learn computing and English.">Mon objectif est d’apprendre davantage, de créer des applications utiles et de devenir programmeur. J’aimerais aussi encourager les jeunes à apprendre l’informatique et l’anglais.</p>
+        <blockquote>« Je peux tout par celui qui me fortifie. » <cite>— Philippiens 4:13</cite></blockquote>
+      </article>
+    </section>
+
+    <section id="progressPage" class="page hidden">
+      <div class="page-topbar"><button class="back-button" type="button" onclick="goHome()" data-fr="← Accueil" data-en="← Home">← Accueil</button><h1 data-fr="📊 Ma progression" data-en="📊 My progress">📊 Ma progression</h1></div>
+      <p class="page-intro" data-fr="Vos résultats sont enregistrés sur cet appareil." data-en="Your results are saved on this device.">Vos résultats sont enregistrés sur cet appareil.</p>
+      <div id="progressContent" class="progress-grid"></div>
+    </section>
+
+    <section id="levelPage" class="page hidden">
+      <div class="page-topbar"><button class="back-button" type="button" onclick="navigateBack()" data-fr="← Retour" data-en="← Back">← Retour</button><h1 id="levelTitle">Niveau</h1></div>
+      <p id="levelDescription" class="page-intro"></p>
+      <div id="levelContent" class="lesson-list"></div>
+    </section>
+    <footer class="app-footer">Le Guide de l’ordinateur</footer>
+  </main>
+</body>
+</html>
